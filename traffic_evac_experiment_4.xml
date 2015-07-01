@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE experiments SYSTEM "behaviorspace.dtd">
+
+<experiments>
+	<experiment name="default" repetitions="1" runMetricsEveryStep="false">
+	<setup>setup</setup>
+	<go>go</go>
+	<enumeratedValueSet variable="seed_decimal">
+		<value value="0.1192019331"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="run_num">
+		<value value="0"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="TICK_LIMIT">
+		<value value="7200"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="TIME_LIMIT">
+		<value value="7200"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="PLUME_VARIATION_X_START">
+		<value value="127"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="TICKS_TO_ALARM">
+		<value value="150"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="NUM_CARS">
+		<value value="5000"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="PERCENT_LEAVING">
+		<value value="0.5"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="PERCENT_HEAR_ALARM">
+		<value value="0.5"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="PERCENT_HEAR_AFTER">
+		<value value="0.8"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="evac_file">
+		<value value="&quot;traffic_evac_lights&quot;"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="out_file">
+		<value value="&quot;traffic_evac_out&quot;"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="inter_file">
+		<value value="&quot;traffic_pre&quot;"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="garage_file">
+		<value value="&quot;traffic_evac_garages&quot;"/>
+	</enumeratedValueSet>
+  <enumeratedValueSet variable="sign_file">
+      <value value="&quot;traffic_evac_signs&quot;"/>
+    </enumeratedValueSet>
+	<enumeratedValueSet variable="conc_file">
+		<value value="&quot;traffic_evac_conc&quot;"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="resume_file">
+		<value value="&quot;traffic_evac_state.csv&quot;"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="log_file">
+		<value value="&quot;../../error_log.xml&quot;"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="#is_gui?">
+		<value value="false"/>
+	</enumeratedValueSet>
+	<enumeratedValueSet variable="$version$">
+		<value value="&quot;5.0.0&quot;"/>
+	</enumeratedValueSet>
+	</experiment>
+</experiments>

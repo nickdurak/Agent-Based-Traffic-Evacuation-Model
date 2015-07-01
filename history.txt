@@ -1,0 +1,1581 @@
+version 5.0.0
+4/28/2013 07:28PM
+------------------
+SUMMARY:
+ -updated to work with NetLogo 5.0.4
+ -decreasing east/west variance in plume
+ -fixed error with random seed going outside the domain of [-1,1]
+------------------
+MAJOR-CHANGES:
+ -Decreased the variance of the plume east/west position by 1/3
+ -Updated NetLogo version to 5.0.4
+ 
+/******************************************************************************/
+
+version 4.5.3
+12/11/2011 09:38PM
+------------------
+SUMMARY:
+ -Just decreasing east/west variance in plume
+------------------
+MAJOR-CHANGES:
+ -Decreased the variance of the plume east/west position by half
+ 
+/******************************************************************************/
+
+version 4.5.2
+10/26/2011 10:57PM
+------------------
+SUMMARY:
+ -Speeding if stressed
+ -7750 Lines
+------------------
+FEATURES-ADDED:
+ -Speed multiplier for high sense of urgency
+
+/******************************************************************************/
+
+version 4.5.1
+09/25/2011 10:49PM
+------------------
+SUMMARY:
+ -U-Turns
+ -Plume offset to south and more east
+ -Bugfixes
+ -7740 Lines
+------------------
+BUGS-FIXED:
+ -Bug created when moving plume south, fixed
+ -Change lanes at intersection when avoiding "block the box"
+    -fix for crashed/incapacitated car just past intersection
+FEATURES-ADDED:
+ -Random plume offset to south, or farther to the east
+ -U-Turns when sense of urgency is high enough
+SOURCE-CHANGES:
+ -Remove debug printing for "drove in circle", wasn't really correct anyway
+MINOR-CHANGES:
+ -Check if lane is clear in reverse (for U-Turn)
+ 
+/******************************************************************************/
+
+version 4.5.0
+09/11/2011 10:24PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Accidents
+ -Run red light
+ -7631 Lines
+------------------
+BUGS-FIXED:
+ -Ignore left turners of opposite direction when running red
+ -Bug in inching up code for GREEN light (when avoiding blocking the box but inching up)
+ -Fix for off-by-one error in "intersection-clear?"
+FEATURES-ADDED:
+ -Accidents: check vectors for collisions
+ -Run red light: can happen if waiting minimum 10 ticks, sense of urgency > law compliance threshold
+    -May cause accident by not noticing all cross traffic (random chance of ignoring cross traffic)
+MAJOR-CHANGES:
+ -Try to intelligently assign evacuation direction based on location
+ -Double percentage chance of turning on radio if awareness > 0.25 threshold
+ -Never turn off radio if awareness above threshold or sign told them to
+ -"is-aware?" does not factor in sense of urgency, just awareness
+SOURCE-CHANGES:
+ -Change stress -> sense of awareness, panic removed (tunnel vision)
+MINOR-CHANGES:
+ -Sense of urgency increases slightly faster
+ 
+/******************************************************************************/
+
+version 4.4.12
+03/21/2011 05:45PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -7353 Lines
+------------------
+BUGS-FIXED:
+ -Plume offset crashed if offset was positive (trying to find patches to the left)
+    -Now we do the same check if out of range on the left as on the right
+ -New inching up (4.4.11) was buggy as it relied on distance to current patch center
+    -Fixed by checking heading to center and only inching up if we are approaching center, NOT if we have passed it
+ -"find-nearest-car" changed to check for wait_times that are equal
+    -This allowed inifinite recursion
+    -Fixed by pulling out the logic to find the nearest car from the code that also checks for deadlock
+    -Now the function called recursively is just a part of the function and it will not recurse further than a single level
+
+/******************************************************************************/
+
+version 4.4.11
+03/18/2011 01:12AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -7308 Lines
+------------------
+BUGS-FIXED:
+ -Fix inching up when getting to a light patch (so we go to patch center almost)
+ -When checking for passing, look for cars 1.5 distance ahead instead of 1.2
+ -Only change goal to turn right when waiting long IF can_change = true
+    -Avoids cars that just turn right because they were waiting but later have to make more turns
+ -In "update-goal" update new_dir based on state of left_turner, not based on "initial?" param
+    -This fixed a wierd bug when calling "update-goal" recursively for left_turners
+ -In "update-goal" don't make evacuaters with intermediate goals (e.g. to turn around)
+    call "local-goal" if they reached the destination
+    -This avoids a recursive call to "update-goal"
+FEATURES-ADDED:
+ -"get-corrected-heading" To figure out new heading in determining routing decisions for next intersection
+SOURCE-CHANGES:
+ -Added debugging to keep a history of intersections travelled to
+    -Tries to detect cars driving in circles
+ 
+/******************************************************************************/
+
+version 4.4.10
+03/11/2011 10:43PM
+------------------
+SUMMARY:
+ -Random plume offset
+ -Bugfixes
+ -7252 Lines
+------------------
+BUGS-FIXED:
+ -Cars driving straight at green light stopped to prevent "blocked box" will inch up to the light
+ -Cars travelling straight waiting long time try to avoid turning right to save time
+    -Must be at green light space or able to turn right on red
+    -Still not perfect
+ -Plot for AEGL was broken from 4.4.9
+FEATURES-ADDED:
+ -Random plume offset +/- 1 block (can be toggled)
+MINOR-CHANGES:
+ -"right-on-red" uses a function to test if possible, "can-turn-right-on-red?"
+ 
+/******************************************************************************/
+
+version 4.4.9
+01/27/2011 10:03PM
+------------------
+SUMMARY:
+ -Some more improvements in knowledge, awareness and stress
+ -Minor bugfixes
+ -7212 Lines
+------------------
+BUGS-FIXED:
+ -"is-heading-to-plume?" returns false if the plume is turned off
+ -"report-results" was using strings still in checking AEGL => 0 always reported (since 4.4.8)
+FEATURES-ADDED:
+ -Knowledge can be turned off like the other new features
+ -"will-evacuate?" function to extract the calculation based on probability that
+    a car will evacuate as its next goal
+MAJOR-CHANGES:
+ -"update-awareness-knowledge" will increase awareness and turn on radios when drivers
+    see cars in AEGL2 just like the effects of AEGL1
+ -The wait time before passing on the left is a function of sress (normal time * (1-s))
+ -Attempt to take evacuation route only if knowledge > 0.25 (or combined K+A>1)
+    and driver is not panicking
+ -Evacuating cars driving N/S will take the first possible turn unless they have
+    (K > 0.25 or K+A>1) and stress<panic
+SOURCE-CHANGES:
+ -Plot stress with awareness/knowledge
+ -Plot road volume (to see when cars take evac route)
+MINOR-CHANGES:
+ -AEGL car labels are GUI only now
+ 
+/******************************************************************************/
+
+version 4.4.8
+01/13/2011 08:58PM
+------------------
+SUMMARY:
+ -Starting stress model
+ -7140 Lines
+------------------
+FEATURES-ADDED:
+ -Stress accumulation
+    -can be deactivated
+    -cars have panic_threshold that is normally distributed around 80% with 10% SD
+    -currently affected by awareness, AEGL1, pedestrian AEGL2, wait time, absence of these
+    -Effects: increased likelihood of evacuating, panic_threshold to no longer take a smart evacuation route
+MAJOR-CHANGES:
+ -Cars now have aeglevel instead of relying on label
+ -"update-awareness-knowledge" now has AEGL1 effects moved from "check-aegl"
+SOURCE-CHANGES:
+ -Renamed AWARENESS_THRESHOLD and 2 to _HIGH and _LOW
+MINOR-CHANGES:
+ -Plot stress distribution for debugging
+ 
+/******************************************************************************/
+
+version 4.4.7
+01/10/2011 08:43PM
+------------------
+SUMMARY:
+ -Pedestrian exposure calculated
+ -7052 Lines
+------------------
+FEATURES-ADDED:
+ -Pedestrian exposure model calculates estimated AEGL-2 level of pedestrians that drivers can see
+MINOR-CHANGES:
+ -"update-plume" gets called every step in order to model pedestrians (plume still only changes on intervals)
+ 
+/******************************************************************************/
+
+version 4.4.6
+11/17/2010 09:49PM
+------------------
+SUMMARY:
+ -Bugfix
+ -Performance improvements
+ -Code cleanup
+ -7027 Lines
+------------------
+BUGS-FIXED:
+ -"change-lanes" had bug for cars that were passing which let them get stuck in "passing" state
+MAJOR-CHANGES:
+ -Performance improvements in "update-speed" by skipping parts after deciding to slow down
+ -Performance improvement of "fix-one-way" by building matrix of intersections to query faster
+SOURCE-CHANGES:
+ -Moved some of the debugging code into a "#check-invariants" procedure
+MINOR-CHANGES:
+ -Moved goal changing logic out of "update-speed" for when box is blocked for a long time to "make-turn-decision"
+ 
+/******************************************************************************/
+
+version 4.4.5
+10/28/2010 11:55PM
+------------------
+SUMMARY:
+ -Minor bugfixes and cleanup
+ -6967 Lines
+------------------
+BUGS-FIXED:
+ -If a car is going less than the average acceleration speed, but not 0, they would coast
+    -Now we only do this if they are about 2 spaces (+speed+Avg_Acc) away from car ahead or closer
+SOURCE-CHANGES:
+ -Now the "$trace" debug code is a binary encoding of what parts of the code that turtle hit
+ -Also removed "$trace" code from "will-cars-collide" so they don't accumulate this when passing
+ -Moved the "will-cars-collide?" check to separate "if" for better debugging
+MINOR-CHANGES:
+ -Moved some globals out of xml-only section, they rarely need to be changed now
+ -Cleaned up some unecessary code in setup-plots, may not need that at all
+ -Cleanup some of the code for speed control when going slower than car ahead
+ 
+/******************************************************************************/
+
+version 4.4.4
+10/21/2010 08:48PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Added signs which tell drivers to turn on radio
+ -More awareness due to perception of smell AEGL1
+ -Goal to evacuate based only on awareness of situation and probability, no "sirens"
+ -6966 Lines
+------------------
+BUGS-FIXED:
+ -Don't avoid "blocking box" because left turners of opposite direction are stuck in intersection
+ -Cars driving slower than car ahead will slow down if the distance
+ -"find-nearest-left-turner" needed another fix for non-toroidal fix
+ -Bug in "update-goal" when initial?=true for left_turners
+    -They were correcting the heading as if they were about to turn
+    -This was bad when they were still heading to an intersection and we want to base other decisions on current heading
+FEATURES-ADDED:
+ -Signs which display a message
+    -these signs can be read in about 3 seconds from 660 feet at 60 degree angle
+    -they instruct drivers to turn on radio
+    -new input file describes where to place signs
+    -cars have a count for how long they have seen a sign (accumulates, does not decrease over time)
+ -No longer have 50% automatically evacuate, instead use awareness through radios (unless radios are off)
+ -"find-new-goal" evacuation with radios mode changed
+    -If awareness is above a threshold there is a 80% * awareness chance of evacuating
+ -Cars not evacuating during alarm, not at destination intersection might evacuate every time step
+    -If awareness is above a threshold there is 80%/10 * awareness chance of evacuating
+ -Cars reaching AEGL1 have 5% chance of turning on radios every step
+ -Cars reaching AEGL1 have 10% chance of increasing awareness every step
+    -The limit is normal if radio is on, but only 1/2 if radio is off, can't become much more aware based on smell alone
+ -"is-aware?" helper checks if awareness is above a certain threshold
+SOURCE-CHANGES:
+ -Added helper for finding block centers for placing garages and signs
+ -Removing some "setup-plots" stuff, not really needed
+ -Debugging code for slow down to turn right and for avoiding blocking the box
+MINOR-CHANGES:
+ -New plots for evacuation, radios, and sign visibility
+ -Radios and signs are features that can be turned off
+ 
+/******************************************************************************/
+
+version 4.4.3
+10/12/2010 12:29AM
+------------------
+SUMMARY:
+ -Added testing
+ -Bugfixes (still many more to do)
+ -A little more knowledge/awareness
+ -6677 Lines
+------------------
+BUGS-FIXED:
+ -Lots of speed control fixes
+    -Don't look at car ahead if you are going slower, but coast if speeds approx equal
+    -More bugs found and physics/math errors corrected - still imperfect
+    -Use "will-cars-collide?" in "speed-car-ahead"
+ -"lane-is-clear?" was using a negative time to look behind
+ -Some changes/fixes in "will-cars-collide?" with bad math
+ -No passing on the left if plume is disabled
+FEATURES-ADDED:
+ -Cars evacuating that are knowledgable will not drive north/south into plume
+ -"is-heading-to-plume-y?" Checks if a car is near the plume and driving into it N/S
+ -"is-aware-and-know?" checks if a car has enough awareness/knowledge to make better decisions
+MAJOR-CHANGES:
+ -Added testing framework which revealed some bugs in speed control
+SOURCE-CHANGES:
+ -Added some new tracing of speed control to try to work out the bugs
+ 
+/******************************************************************************/
+
+version 4.4.2
+10/05/2010 12:11AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Added different evacuation direction decisions
+ -6194 Lines
+------------------
+BUGS-FIXED:
+ -evac_goal was not initialized in "sound-alarm"
+FEATURES-ADDED:
+ -Keep track of plume center so that aware/knowledgable cars can use this
+ -"evacuate" procedure allows changing goal direction if a>3/2threshold and a+k>MAXk
+MINOR-CHANGES:
+ -Plotting evacuation direction
+ 
+/******************************************************************************/
+
+version 4.4.1
+09/29/2010 01:25AM
+------------------
+SUMMARY:
+ -Minor syntax fix
+ -6122 Lines
+------------------
+SOURCE-CHANGES:
+ -Changed all DIR_UP, DIR_RIGHT, DIR_DOWN, DIR_LEFT to DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST
+ 
+/******************************************************************************/
+
+version 4.4.0
+09/28/2010 08:24PM
+------------------
+SUMMARY:
+ -Starting awareness/knowledge model
+ -Allowing evacuations to west in addition to east (not fully implemented)
+ -6122 Lines
+------------------
+FEATURES-ADDED:
+ -Added Knowledge/Awareness Model
+    -Constants for some distributions and how things change
+    -Knowledge uniformly distributed [0,1.0)
+    -Awareness starts at 0
+    -40% of cars initially have radios turned on
+    -Update these every time step during alarm stage
+    -Will evacuate on setting new goal after awareness > threshold
+MAJOR-CHANGES:
+ -"evac_goal" variable added to allow car to decide which direction to evacuate
+    -defaults to east still
+MINOR-CHANGES:
+ -"log-error" and "save-state" use carefully to print when it cannot write to file
+ -Some plotting for new variables for debug purposes
+ 
+/******************************************************************************/
+
+version 4.3.1
+04/23/2010 11:19AM
+------------------
+SUMMARY:
+ -Bugfix
+ -6034 Lines
+------------------
+BUGS-FIXED:
+ -Clear old exception on resume because it was MOST LIKELY from going over the time limit
+
+/******************************************************************************/
+
+version 4.3.0
+04/21/2010 03:39PM
+Codename: Creed
+------------------
+SUMMARY:
+ -Freeze and Restore state when time runs out
+ -6030 Llines
+------------------
+BUGS-FIXED:
+ -Extra condition to check end of evacuation
+FEATURES-ADDED:
+ -Freeze and resume state of simulation if time limit is reached (no results reported, no error)
+MINOR-CHANGES:
+ -Tick limit set to 7200 (was 6000)
+
+/******************************************************************************/
+
+version 4.2.0
+03/23/2010 03:08PM
+------------------
+SUMMARY:
+ -New exit condition for better comparison
+ -Bug fix
+ -5973 Lines
+------------------
+BUGS-FIXED:
+ -Right turners could not pass stuck cars (4.1.7 only bug)
+MAJOR-CHANGES:
+ -Exit condition is ONLY tick limit, do not exit early for runs that are "done"
+	-Runs that are "done" will keep going but cars will no longer try to move, only AEGL calculations happen
+MINOR-CHANGES:
+ -Monitors in GUI
+ 
+/******************************************************************************/
+
+version 4.1.7
+03/07/2010 02:24PM
+------------------
+SUMMARY:
+ -Bug Fix
+ -Error logging
+ -5956 Lines
+------------------
+BUGS-FIXED:
+ -Fix in "find-nearest-car" for stopped cross traffic that was ignored
+	-Now checks more specifically for cases in which cars are waiting for each other and only ignores a car in that case
+ -"find-nearest-car" is non-toroidal in all directions now (was just east-west) ****Need to copy this to find-nearest-turner
+ -"pass-on-left" makes sure passing lane is opposing traffic and NOT cross traffic
+ -"pass-on-left" no longer ignores cars travelling in same direction that are disabled
+ -"pass-on-left" no longer ignores cross traffic
+FEATURES-ADDED:
+ -Error logging (log-error) : logs all error messages to a common file for debugging HEEDS runs
+ 
+/******************************************************************************/
+
+version 4.1.6
+03/03/2010 05:56PM
+------------------
+SUMMARY:
+ -Bug fixes
+ -5876 Lines
+------------------
+BUGS-FIXED:
+ -Removed caching of find-nearest-car because lane changes can make that value useless (4.1.4 regression)
+ -Inifinte loop did not have stop condition, now loop will exit and reports false (in "intersection-clear?")
+ -Reset wait time after changing lanes, otherwise double lane changes possible under certain conditions
+MINOR-CHANGES:
+ -Tick limit increased to 6000 (was 5600) to allow full evacuations
+ 
+/******************************************************************************/
+
+version 4.1.5
+02/28/2010 01:00PM
+------------------
+SUMMARY:
+ -Bugfix
+ -5867 Lines
+------------------
+BUGS-FIXED:
+ -Use carefully where "myself" was called which could be an error
+
+/******************************************************************************/
+
+version 4.1.4
+02/16/2010 04:31PM
+------------------
+SUMMARY:
+ -Bugfix
+ -Performance improvements and optimizations
+ -5861 Lines
+------------------
+BUGS-FIXED:
+ -Cars could pass off road and break other parts of code by passing on left at garage driveways
+FEATURES-ADDED:
+ -Cars store results of "find-nearest-car" so that the function can be called less (can't be used for lane changes)
+FEATURES-DEPRECIATED:
+ -Removed unused "safe_zone" and "bad_zone" for time saving and consistent patch colors
+MAJOR-CHANGES:
+ -Added "EXCEPTION?" flag to allow any procedure stop the entire run as a fatal error
+SOURCE-CHANGES:
+ -The broken infinite loop error message should give more details for debugging
+ -Better debugging of lane change errors by checking for non-road changes
+MINOR-CHANGES:
+ -Store the color of road and intersection patches for faster checks
+	-Changed in "turn-right" to find non-road patches
+	-"change-lanes-x" functions should perform faster by looking at color, not using "member?"
+ -Removed calls to "member? x intersections" in favor of faster [intersection?] check
+ -Print in output if error occurred
+ 
+/******************************************************************************/
+
+version 4.1.3
+02/15/2010 03:22PM
+------------------
+SUMMARY:
+ -Bugfix
+ -5837 Lines
+------------------
+BUGS-FIXED:
+ -Error exit condition printing was incorrect (printed lists, should be max value of list)
+MINOR-CHANGES:
+ -Print message when exiting because of time limit (in seconds)
+ 
+/******************************************************************************/
+
+version 4.1.2
+02/12/2010 03:16PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Garage exposure affects cars leaving garages
+ -Minor fixes for consistent RNG
+ -5836 Lines
+------------------
+BUGS-FIXED:
+ -Included the agentset garage_cars in some miscellaneous procedures
+ -Count the garage_cars in the output of "report-results"
+FEATURES-ADDED:
+ -Garages keep track of chemical exposure so cars they spawn have memory
+ -"recycle" function to remove cars either by storing them as object pool or deleting them
+MAJOR-CHANGES:
+ -Temporarily spawn all garage cars before printing results and calculate their AEGL to count them in casualties
+SOURCE-CHANGES:
+ -No preprocessing to remove turtle variables (will affect rng?)
+ -"calculate-exposure" split
+	-"update-concentration" changes the turtle's internal concentration based on outdoor (was part of "calculate-exposure")
+	-"check-aegl" checks cars exposure and applies effects of AEGL to turtle in necessary (was part of "calculate-exposure")
+MINOR-CHANGES:
+ -message printed stating car could not turn right uses with-local-randomness because it used agentsets
+ -"evacuation-done?" uses with-local-randomness so changes to logic do not affect runs (allow different types of checks?)
+ -Error condition in "report-results" is consistent with other types of exit conditions
+ 
+/******************************************************************************/
+
+version 4.1.1
+02/04/2010 11:25PM
+------------------
+SUMMARY:
+ -Bugfixes (stable passing mostly)
+ -Cars can "see" car ahead passing
+ -Left turners can now pass cars disabled by AEGL levels
+ -Right turners have better passing options
+ -5745 Lines
+------------------
+BUGS-FIXED:
+ -Major bug in "find-nearest-car" for cars behind because "linear-distance" would not work
+ -Other bug in "find-nearest-car" would ignore cars behind because of check to ignore toroidal wrap around
+ -"any-cars-here-to-dist?" which is used for right on red and garage car turns would stop these actions if it saw
+	an incapacitated car, causing garages to get stuck for no good reason
+ -"change-lanes" no longer forces cars to change lanes to the right if they are "passing"
+	-if they are in a "legal" (non-opposing traffic) lane, they will behave normally
+	-otherwise, check to make sure the lane change right is legal and will not force the car off road and break the run
+ -"pass-on-left" looks for cars on current patch because car may be on a patch boundary sharing a patch with another car
+ -"pass-on-left" search algorithm is smarter about distance ahead to look for a safe pass and ignoring slow oncoming traffic (etc.)
+ -"can-complete-left-turn?" would stop traffic if there were AEGL disabled cars where car wanted to turn
+	even if there was room to go and then pass the disabled.  Now we throw out these AEGL cars if there is some room
+ -"evacuation-done?" had incorrect parenthesis using "with" condition and would not hit stop condition
+ -similarly, "report-results" needed parentheses fixed for correct output
+FEATURES-ADDED:
+ -Passing cars will notify car behind so it can wait half as long to pass because it "saw" the action
+	-This is limited to a short time period so cars don't get stuck in this mode
+	-Could be more intelligent besides just cutting wait time in half
+ -Left turners can pass AEGL disabled cars by getting out of turn lane (change to normal car type)
+MAJOR-CHANGES:
+ -"Linear-distance" requires a direction parameter - now allows distance behind a car
+ -"change-lanes" allows right turners to use all of the features to pass cars as long as "passing" flag is set
+SOURCE-CHANGES:
+ -Reorganized globals a little
+ -Pass tick limit global
+MINOR-CHANGES:
+ -Added a debug variable to count how many times a car changes goals
+ -Added "verbose logging" which will be stripped out by preprocessor
+ -Increased tick limit to 5600
+
+/******************************************************************************/
+
+version 4.1.0
+01/26/2010 04:22PM
+CODENAME: Stanley
+------------------
+SUMMARY:
+ -Bugfixes
+ -AEGL calculation corrected
+ -Passing on the left around disabled cars
+ -Updated output and stop conditions
+ -Minor changes
+ -Next HEEDS deploy will be 4.1.x branch (Stanley)
+ -5556 Lines
+------------------
+BUGS-FIXED:
+ -AEGL calculation was wrong, has been tested to fit data
+ -Cars were only spawning from garages if there were off map cars because of bad check in go
+ -Infinite loop possible in "intersection-clear?" called by cars in impossible locations
+	-called by left_turners looking at these cars
+	-root cause also eliminated, but loop identified and safety exit added
+ -cars passing on left do not run "make-turn-decision" which allows double lane changes
+FEATURES-ADDED:
+ -"pass-on-left" to pass disabled cars into opposing traffic
+	-only on two-way roads for now (assume no shoulder)
+	-limited to 3 cars to pass
+	-must wait 10 seconds
+ -"evacuation-done?" checks to see if there are non-disabled cars left less than the 10% not required to evac
+	-checks if these cars have all been waiting at least 240 ticks (2 minutes)
+FEATURES-DEPRECIATED:
+ -"put-on-danger-road" was only used to spawn cars from the left, not used so removed
+MAJOR-CHANGES:
+ -Fixed exit condition for new requirements (no longer just percentage, look at non-disabled)
+ -"report-results" format major changes for future optimization with HEEDS (documented in source)
+SOURCE-CHANGES:
+ -Better "preprocessor" support, could be implemented easily
+ -Removed some stress/awareness setup which was a stub
+ -"incapacitated?" flag added for easy check for AEGL-2 and AEGL-3 disabled cars
+ -No longer use the "debug" plot which hasn't been used in a long time (was looking at distribution of local goals)
+MINOR-CHANGES:
+ -Set tick limit at 5400 (was 5000)
+ -XML file updated, some data (i.e. AEGL) moved out of XML
+ -Garages and plume can be toggled for debugging (will affect report-results)
+ -Fixed some plotting to remove old variable "EXTRA_RESPAWN"
+ -Disabled AEGL-2 cars will come to a stop instead of instantly freezing
+ -"change-lanes-right" and "change-lanes-left" optimized to call patch-x-and-ahead only once
+ -Plot AEGL counts
+ -Added "show-gas" procedure (no javadoc?) just for debugging and printing plume pics
+
+/******************************************************************************/
+
+version 4.0.2
+01/07/2010 04:04PM
+------------------
+SUMMARY:
+ -Redid toroidal behavior
+ -Code optimizations
+ -5353 Lines
+------------------
+FEATURES-ADDED:
+ -All edges of map behave like left edge did during alarm
+FEATURES-DEPRECIATED:
+ -No extra cars spawn when alarm sounds
+MAJOR-CHANGES:
+ -Evacuation allowed to east OR west
+ -"right-turn-lane?" and "left-turn-lane?" sped up, entire go loop is 150% faster
+SOURCE-CHANGES:
+ -Changed "danger_cars" to "offmap_cars"
+
+/******************************************************************************/
+
+version 4.0.1
+12/05/2009 02:31PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Updated Exposure
+ -AEGL affected cars will stop moving
+ -5209 Lines
+------------------
+BUGS-FIXED:
+ -Only start deleting evacuated cars if there are no more to create from left OR from garages
+ -Garage cars could turn into space occupied by left_turner and become a left_turner, creating huge pileups
+	-If they would do this, don't let them turn left this time, go straight and figure it out at the next light
+ -Don't update plume beyond the time that data exists for, would have allowed 0 concentration after 1 hour
+ -No lane changes on a red light spot, this allowed cutting after a right turner turned on red, unrealistic
+ -Light change in emergency was happening one tick too late, was waiting for tick after red-red cycle
+	-After the red-red cycle, cars have already been exposed to a green light and this is not the desired behavior
+	-Want to change lights on a red-red light so that cars are all stopped and the only change possible is 
+	to have one light turn green, which is completely safe for either direction of traffic
+FEATURES-ADDED:
+ -Cars that reach AEGL-2 or AEGL-3 stop
+MAJOR-CHANGES:
+ -Changed exposure calculation to use exposure-scaled time and separate levels for AEGL-2 and AEGL-3
+ -AEGL-1 is not time-dependent
+MINOR-CHANGES:
+ -Tick limit is 5000, could be changed needs testing
+ -Air exchange rate recalculated for 7 exchanges per hour (was 8) to match article
+
+/******************************************************************************/
+
+version 4.0.0
+11/10/2009 11:02PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Plume Model
+ -Left turner regression fixes
+ -Minor changes
+ -5195 Lines
+------------------
+BUGS-FIXED:
+ -Plot range set correctly without garages
+ -"find-nearest-left-turner" updated like "find-nearest-car" for many fixes
+ -"continue-left-turn" uses new "speed-car-ahead" to fix left over bugs
+ -Bug found: garage cars get stuck when turning left immediately UNFIXED
+FEATURES-ADDED:
+ -Loose Framework for stress/awareness model (variables)
+ -Plume Model
+	-Patches have gas concentration
+	-Concentration read from data file
+	-AEGL levels with rough model
+	-Susceptibility distribution
+	-"setup-plume"
+	-"update-plume"
+	-"calculate-exposure"
+ -Garages can be toggled on or off
+SOURCE-CHANGES:
+ -"reset-patch-colors" to allow changes in patch colors to be reset (i.e. see gases)
+ -Garages keep track of red "stop" spot for recoloring
+MINOR-CHANGES:
+ -Number of cars will be 5000 with 2500 off map
+ -Renamed "set-speed" to "update-speed" and removed some logic so that left_turners can use it: "speed-car-ahead"
+
+/******************************************************************************/
+
+version 3.0.3
+10/21/2009 12:07AM
+------------------
+SUMMARY:
+ -Bugfix
+ -4799 Lines
+------------------
+BUGS-FIXED:
+ -"linear-distance" now supports toroidal wrapping to fix odd edge behavior
+SOURCE-CHANGES:
+ -Added test procedure for linear-distance
+
+/******************************************************************************/
+
+version 3.0.2
+10/16/2009 12:15AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -4756 Lines
+------------------
+BUGS-FIXED:
+ -Cars on same patch going different direction could get stuck, now choose one to move
+    -Deadlock!
+ -Left turners should wait if there are cars in the intersection stopped (breaking don't block the box)
+ -UNFIXED: cars on toroidal edges will wait for a while to move because of coordinates in "linear-distance" calculation
+MINOR-CHANGES:
+ -Check for file exists errors on setup
+ -Changed plots
+ -Print error message about the number of ticks when cars get stuck
+
+/******************************************************************************/
+
+version 3.0.1
+08/20/2009 04:16PM
+------------------
+SUMMARY:
+ -Bugfix
+ -4731 Lines
+------------------
+BUGS-FIXED:
+ -Removed the - 1 from TICKS_TO_ALARM so that 0 corresponds to prior to the first run as it should
+
+/******************************************************************************/
+
+version 3.0.0
+08/12/2009 06:46PM
+CODENAME: Pam
+------------------
+SUMMARY:
+ -Bugfixes
+ -Parking Garages added
+ -4732 Lines
+------------------
+BUGS-FIXED:
+ -Turtles cleared in "setup" so that garages are redone
+ -Reset makes garages remove their driveways before deleting the garages to start over
+ -Call "setup-controllers" with-local-randomness
+ -"setup-car" only sets goal for cars, not garage_cars
+ -Plot for cars leaving used turtles, now uses cars and left_turners
+ -"find-nearest-left-turner" had bug for cars on same patch but behind
+ -"right-on-red" had bug by not using mod on heading to see if a right turn is allowed
+ -"any-cars-here-to-dist?" used "other cars-on" but was called by patches so other is not allowed
+ -Do not count other cars on same patch in "intersection-clear?" and "right-turn-clear?"
+ -"sound-alarm" only sets new goals for cars and left_turners (not garages for instance)
+ -Check at end for 90% evacuated takes garages into account
+FEATURES-ADDED:
+ -Parking Garages
+	-New breed garage_cars for cars exiting garages
+	-New input file garage_file describing where to place garages
+	-"setup-garages" procedure
+	-"spawn-garage-cars" procedure
+	-"new-car-hatch" is "new-car" that can be called by turtles instead of observer
+	-"find-garage-queue" procedure
+	-"move-garage-car" procedure
+	-"turn-garage-car" procedure is similar to "right-on-red" but allows left and right turn
+MINOR-CHANGES:
+ -Only 90% of cars must evacuate now that there are 6000 cars (was 93% and 1500 cars)
+ -Removed a "set-car-color" in "respawn-cars" because it will be called again on same turn
+
+/******************************************************************************/
+
+version 2.8.0
+08/10/2009 02:42AM
+------------------
+SUMMARY:
+ -Many bugfixes
+ -Memory management for spawning
+ -Garages started but incomplete
+ -4394 Lines
+------------------
+BUGS-FIXED:
+ -Several major bugs in "find-nearest-car"
+	-ex: if there were other cars behind this one, it could cause no cars to be reported so the cars drive through others
+	-Look one extra space ahead and remove cars that are beyond the max distance in cases of patch boundaries
+	-Ignore toroidal nearest cars during an emergency which caused huge locks
+	-Fixed so that cars no longer stack up on same patch
+ -Lane changing checks that the distance to the car in the next lane is greater than 1
+ -Left turners do not wait for oncoming cars on green lights that are stopped and waiting because of box block checks
+ -"can-complete-left-turn" Limits check to half distance so they do not get stuck as often
+ -Set evac? false in "find-new-goal"
+FEATURES-ADDED:
+ -Memory management to reuse evacuated cars as "spawned" cars (object breed)
+	-Keep track of number of cars to spawn and create them on the fly
+	-Cars only respawn during alarm
+	-Evacuated cars only "die" if there are enough cars available in the pool to spawn
+	-"new-car" procedure to get an available car to reuse or make a new one if none are available
+ -Added "garage" breed but incomplete
+ -"linear-distance" procedure gets the distance between cars in same or different lanes instead of true diagonal distance
+FEATURES-DEPRECIATED:
+ -Do not create all extra cars at alarm
+MAJOR-CHANGES:
+ -"find-nearest-car" only called by turtles with new parameter for the patch to start looking at
+ -"hide-me" does not have an extra time option
+ -Lane changing checks use "linear-distance" to fix some problems
+SOURCE-CHANGES:
+ -Added "$trace" variable to cars for debug
+ -Reset "changed_lights" to 0 between runs
+ -Added debugging check for multiple cars on one patch
+MINOR-CHANGES:
+ -Ticks until alarm decreased to 150
+ -Removed "EXTRA_RESPAWN_TIME" and just respawn as space is available
+ -Cars set reset goal variables in "setup-car" just in case
+
+/******************************************************************************/
+
+version 2.7.1
+08/03/2009 11:18PM
+------------------
+SUMMARY:
+ -Bugfix
+ -4244 Lines
+------------------
+BUGS-FIXED:
+ -Extra respawn cars did not have goals reset
+
+/******************************************************************************/
+
+version 2.7.0
+07/27/2009 02:54PM
+------------------
+SUMMARY:
+ -Cars going to intermediate goals only evacuate 80% of the time after
+ -Speed limit has some random variation every time
+ -Percents in source code are now less than 1 (80 became 0.8)
+ -Other minor source changes
+ -4242 Lines
+------------------
+FEATURES-DEPRECIATED:
+ -"set-goal" was just for debugging and is trivial
+ -"put-on-empty-road" officially removed
+MAJOR-CHANGES:
+ -Cars going to intermediate goals during an emergency only have 80% chance of evacuating after (like respawn cars)
+ -Added a small "speed flux" so that cars do not have an exact speed limit (slight variation of 0.1)
+ -"leave-goal" uses better "fix-no-left" built-in
+SOURCE-CHANGES:
+ -Added constants (enumeration) for change_state
+ -Added constant for the 2 tick all red time (TICKS_ALL_RED)
+ -Added constant for the maximum wait time before a car is considered stuck (MAX_WAIT_TIME)
+ -Added constant for right on red distance to look (RIGHT_RED_DIST)
+ -Added constant for checking the distance to make a left turn (LEFT_CHECK_DIST)
+ -Removed unused vroads and hroads agentsets (just local variables now)
+ -Renamed "ultimate_goale" to "local_goal" - more descriptive
+ -Set "EXTRA_RESPAWN_MAX" from 1000 to 1200
+MINOR-CHANGES:
+ -Changed "PERCENT_" constants to be numbers less than 1 so 80 becomes 0.8
+ -Added space to put an offset on column number 1 (2nd column of roads)
+ -Removed some "^ 2" in favor of the faster multiplication
+ -Some diagonal distance changed from 1.4 to 1.42
+ -Left turners checking for clear traffic only look 2 spaces further for each lane they cross (8 was unnecessarily slow)
+ -Major Refactoring of "update-goal" but same functionality
+ -Lowered the error output numbers, probably makes no difference
+
+/******************************************************************************/
+
+version 2.6.2
+07/14/2009 06:46PM
+------------------
+SUMMARY:
+ -Bugfix
+ -4281 Lines
+------------------
+BUGS-FIXED:
+ -Sort lights in right to left order to adjust offset by distance
+	-This favors the left to right driving because the offset depends on the distance of the light to the left
+
+/******************************************************************************/
+
+version 2.6.1
+07/09/2009 12:30PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -4276 Lines
+------------------
+BUGS-FIXED:
+ -Don't increment NUM_CARS by EXTRA_RESPAWN because it may not reset
+ -"respawn-cars" must do "put-on-entrance" before "show-me" or car may take up the only available space and throw an error
+MAJOR-CHANGES:
+ -Moved creation of extra respawn cars to "sound-alarm" for performance
+SOURCE-CHANGES:
+ -Commented out some debugging that is not used in HPCC runs because it is slow
+MINOR-CHANGES:
+ -Changed EXTRA_RESPAWN_MAX to 1000 (was 960)
+
+/******************************************************************************/
+
+version 2.6.0
+07/08/2009 06:18PM
+CODENAME: Jim
+------------------
+SUMMARY:
+ -Roads are not evenly spaced in the horizontal direction
+ -Random seeding has changed
+ -4271 Lines
+------------------
+FEATURES-ADDED:
+ -Vertical roads are unevenly placed so that the horizontal distances are variable
+ -"get-column" reporter added to find the column number of an intersection that is unevenly placed
+ -Added "adjust-offset" for intersection time change in emergency to fix offsets that assume even road distribution
+ -"seed-int" to report the actual seed value used by NetLogo
+ -Print seed number at the end of results for reproducible runs
+FEATURES-DEPRECIATED:
+ -"put-on-empty-road" was slow and using sprout is faster
+ -No longer use a row by row list for light synchronization as horizontal synchronizatio is possible
+MAJOR-CHANGES:
+ -Changed random seed to use a decimal number in [-1,1] multiplied by the maximum to create a valid NetLogo seed
+	-This allows HEEDS to generate stochastic seeds in its non-integer format that work with NetLogo
+ -Cars are created with "sprout" on empty roads instead of placing them on empty roads
+	-Makes "reset" 8 seconds faster (from 13s to 5s)
+SOURCE-CHANGES:
+ -Added commented out profiling support for optimizing model (need to get it to run faster on the HPCC)
+MINOR-CHANGES:
+ -Attemped to speed up slow "fix-one-way" by exitting earlier for cars driving straight
+
+/******************************************************************************/
+
+version 2.5.2
+06/19/2009 01:31AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Better speed control
+ -NetLogo 4.1RC2
+ -4121 Lines
+------------------
+BUGS-FIXED:
+ -Several Speed Control Issues that avoid "blocked boxes":
+	-Better "inching up" to cars when in long slow lines
+	-Redid red lights speed control for much better "inching up" to light space
+	-Cars at yellow lights can no longer ignore "box blocked" checks which allow blocks to happen
+	-Bug where cars stop for lights even though they cannot stop in time so they end up slowing running the light
+ -Distance primatives calculate time based on acceleration constants
+	-Previously, this meant that the distance reporters would change if the car was accelerating or decelerating
+MAJOR-CHANGES:
+ -Cars that are "coasting" set acceleration to 0
+SOURCE-CHANGES:
+ -Lined up interface boxes to grid
+MINOR-CHANGES:
+ -Upgraded to 4.1RC2
+
+/******************************************************************************/
+
+version 2.5.0
+06/14/2009 11:46AM
+CODENAME: Kevin
+------------------
+SUMMARY:
+ -Bugfixes
+ -Much better and faster light change in emergency (and in sync)
+ -Minor changes
+ -4103 Lines
+------------------
+BUGS-FIXED:
+ -Only "setup-plots" if there are any cars
+ -Allow the model to run indefinately if there are no cars (unless TIME_LIMIT is set)
+ -"report-results true" before exiting if the xml file is the wrong version
+ -Other error messages correctly send output to standard output and exit
+ -Stopped cars can now inch up if they have room to move so that cars waiting at lights take up less space
+	-prevents many blocked boxes from right turners
+ -"evacuate" and "leave-goal" did actually require fix-no-left to be called after 
+	-cars were turning left on the evacuation road even though it is not allowed
+ -In "evacuate" cars only try "evacuation-route" if they are not on it already (performance reasons)
+ -"fix-no-left" is safe to call before "fix-one-way" because it removes can_change? if that would allow left on no left roads
+ -new "change-light-timing" correctly sets offset (verified by test function)
+ -"report-results" makes error results at least 10000 for each value
+FEATURES-ADDED:
+ -"light-state" reports the current traffic light state so that it is easier to access this information
+MAJOR-CHANGES:
+ -TIME_TO_RESPAWN changed to 60 (was 30) and TIME_TO_RESPAWN_MAX changed to 120 (was 60) because of new realistic time
+ -HIGH_WAIT_TIME_TOLERANCE set to 240 (was 100) because of new realistic traffic light times
+ -Removed code from "evacuate" to make sure that cars don't turn left on evacuation roads, that should all be externally checked
+ -Cars that try to turn left on no left turn roads will turn right if can_change? = true
+ -"next-phase" checks if timing needs to change and then increments phase
+ -Lights will now only try to synchronize with their row, that is they only wait until all intersections in the same row have changed
+ -Major rework of "change-light-timing" to force all lights to change to yellow immediately and then make the switch when the lights are red
+	-Lights only need to adjust if the new time is a yellow light (which would be awkward coming from red)
+ -Some constants dictating evacuation behavoir are changed
+	-Cars driving vertically turn more often (80%), cars seek evacuation route less often (20%) and 
+	 look at shorter distances (0.3) to get to the evac roads
+SOURCE-CHANGES:
+ -Added global constants to define state of traffic lights (LIGHT_* with GR, YR, RR1, RG, RY, RR2)
+ -Moved NUM_CARS and TICKS_TO_ALARM back to sliders for quick testing
+ -Moved *_file variables to globals from interface
+ -emergency? variable removed from xml file
+ -SPEED_LIMIT, SPEED_MEAN, SPEED_SD, LEFT_BOX_BLOCK_BUFFER, and BOX_BLOCK_QUEUE_LIMIT removed from xml
+ -Print header and footer of output to stand out better (***'s)
+ -Other messages (box block and no right turn) indented so that important messages are easier to see
+ -"#test-light-offset" function to make sure that lights have desired offset (part of new test suite)
+ -Added some debugging buttons to the interface to inspect specific cars and to export-/import-world
+MINOR-CHANGES:
+ -Traffic Controllers have a change_state which keeps track of how far along they are in changing the signal to new timings
+
+/******************************************************************************/
+
+version 2.4.2
+06/04/2009 04:09PM
+CODENAME: Oscar
+------------------
+SUMMARY:
+ -Bugfixes
+ -Light timing range in HEEDS expanded
+ -Some changes in light synchronization for new timings (not complete)
+ -Made setup-patches with-local-randomness
+ -Minor changes
+ -3853 Lines
+------------------
+BUGS-FIXED:
+ -Reset-timer used so that timer is set each run
+ -"will-cars-collide?" uses better physics to estimate collisions
+MAJOR-CHANGES:
+ -Changed light timing range in HEEDS to be longer (more realistic with real time)
+ -Traffic lights synchronize by road for faster light changing
+ -Traffic lights have all red cycles for 2 ticks (because it's 1 second)
+ -Traffic lights can synchronize on all red cycles
+ -"setup-patches" called with-local-randomness because they are essentially constant and should not affect the RNG
+SOURCE-CHANGES:
+ -Rearranged some clear primitive calls from setup to reset
+ -Box blocked output shows who number for easy debugging
+MINOR-CHANGES:
+ -Changed EXTRA_RESPAWN_TIME to 60 (from 30) and EXTRA_RESPAWN_MAX to 960 (from 820)
+ -Changed BLOCK_MAX_WAIT to 480 (was 160)
+
+/******************************************************************************/
+
+version 2.4.0
+06/01/09 12:47PM
+CODENAME: Angela
+------------------
+SUMMARY:
+ -All red phase
+ -Changed light times to be more realistic (with 2 ticks = 1 second)
+ -HEEDS sets light timing offsets from right to left
+ -3827 Lines
+------------------
+BUGS-FIXED:
+ -Added single all red phase after yellow lights
+MAJOR-CHANGES:
+ -Changed input files so that traffic lights have more realistic lengths (30s to 2min)
+ -Changed HEEDS to set offset from right to left (should favor left to right flow)
+SOURCE-CHANGES:
+ -Moved TICKS_TO_ALARM to globals instead of slider
+MINOR-CHANGES:
+ -Changed TICK_LIMIT to 3000 (25min) from 2500 and TICKS_TO_ALARM to 620 (5:10) from 320
+ -Changed the limit of box blocking to 480 (was 200) which is 4 minutes
+
+/******************************************************************************/
+
+version 2.3.3
+05/31/2009 12:38PM
+------------------
+SUMMARY:
+ -Bugfix for output for HEEDS
+ -3809 Lines
+------------------
+BUGS-FIXED:
+ -Output writes time and amount on separate lines so HEEDS can understand
+
+/******************************************************************************/
+
+version 2.3.2
+05/27/2009 01:42PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Time limit on runs for cluster
+ -Uses with-local-randomness so some procedures can be removed if needed
+ -Output prints total running time in seconds
+ -3812 Lines
+------------------
+BUGS-FIXED:
+ -Model runs on the cluster have a time limit so they self-destruct rather than get killed
+ -Models with cars stuck for long times will exit as errors
+ -Cars would slow down at yellow lights then drive through, now they only slow down if they can stop
+ -Left_turners now have a speed of 1 leaving the turn so they crash less
+ -"left-traffic-clear?" fix to use >= instead of > avoids crashing
+FEATURES-ADDED:
+ -Non-essential procedures use "with-local-randomness" so they can be removed
+MAJOR-CHANGES:
+ -Time limit in seconds added for headless runs
+MINOR-CHANGES:
+ -Output prints run time in seconds
+
+/******************************************************************************/
+
+version 2.3.0
+05/26/2009 11:55AM
+------------------
+SUMMARY:
+ -Many Bugfixes
+ -Now possible to spawn extra cars when evacuation begins
+ -xml file must pass version number check
+ -93% of cars must evacuate
+ -Reordering in go
+ -Added timestamp and version to output
+ -Minor Changes
+ -3767 Lines
+------------------
+BUGS-FIXED:
+ -"set-speed" fixed some calculations to use physics equations so that distances reported are correct
+	-Updated this in left turning
+ -Fix for cars waiting a long time to change goal to turn right only for cars going straight now
+ -"find-nearest-car" (and "find-nearest-left-turner") needed some rework to work with patches (particularly use of other does not work with patches)
+ -NOTE: do not remove ceiling from time of any "*-distance" procedure as this was inaccurate (cars don't do anything in fractional time)
+ -Removed the extra time calculation from "safe-distance" that was unreliable for negative accelerations
+ -Incremented "safe-distance" and "brake-distance" by 1 because the current value reported was favoring cars landing on each other
+ -"any-cars-here-to-dist?" uses other to ignore calling agent
+ -Replaced many "of one-of" conditionals with more reliable "any? ... with "
+	-This was a huge bug in "respawn-cars"
+ -Lane changes using incorrect spaces_behind in "lane-is-clear?" so now we use physics
+ -"lane-is-clear?" looked in current lane was therefore useless, now it askes the adjacent patch
+ -Lane changing disallowed when speed = 0 (because cars would rapidly go back and forth while stopped)
+ -"left-traffic-clear?" looks at incrememts of 8 patches for maximum safety and small performance hit (and other fix)
+ -"report-results" uses >= car count because of percentages
+FEATURES-ADDED:
+ -Added extra cars in danger zone once alarm has sounded to spawn more continuous cars during an evacuation
+	-All options are configurable
+ -"put-on-danger-road" to place early danger_cars that will spawn later
+FEATURES-DEPRECIATED:
+ -"find-nearest-car-behind" removed in favor of the direction parameter for "find-nearest-car"
+ -"turtles-ahead" and "turners-ahead" replaced by "find-nearest-*" where they were still used
+MAJOR-CHANGES:
+ -Added version number to model and xml file so that the numbers must match
+	-Now a check to force changed model to be compatible with xml settings
+ -Now using 93% required to evacuate rather than 100% (based on simple testing)
+ -Reorderd "go"
+	-sound alarm, traffic light control, danger_car spawning, queueing, car procedures, debugging, plotting, tick, report results
+	-was: set signals, sound alarm, spawn cars, queue, car procedures, count down danger_cars, sync_timing, debug, plot, traffic phase, tick, report
+ -"find-nearest-car" (and "find-nearest-left-turner") now reports only one agent (closest) because multiples were never used (nor necessary)
+ -"find-nearest-car" (and "find-nearest-left-turner") requires direction parameter and can be called by turtles or patches
+ -Added more? parameter to "hide-me" which allows the extra cars created to stay in "danger" longer than normal cars that just left map
+ -Right turn clear has a 1 car buffer rather than 2 so they are less hesitent to turn
+SOURCE-CHANGES:
+ -Moved "NUM_CARS" from slider to globals
+ -Changed "TIME_TO_RESPAWN_VARIANCE" to "TIME_TO_RESPAWN_MAX" as it is more useful to modify/think that way
+ -Renamed "CHANCE_LANE_CHANGE" to "PERCENT_LANE_CHANGE" for consistency
+ -Using show-turtle/hide-turtle instead of hidden? variable
+MINOR-CHANGES:
+ -Set "BOX_BLOCK_QUEUE_LIMIT" to 16 from 10 to avoid some blocking
+ -Print ticks at alarm output
+ -Removed "set-car-color" and "record-data" from "respawn-cars"
+ -Output file reports version and timestamp
+
+/******************************************************************************/
+
+version 2.2.0
+05/21/2009 01:10AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Smarter lane changes
+ -Cars can change to evacuation road if they are waiting too long
+ -Only 97.5% of cars must evacuate to be considered "done"
+ -Output only written once and shows time and date before and after
+ -Many minor changes
+ -3775 Lines
+------------------
+BUGS-FIXED:
+ -Cars that are waiting at lights just before colored patch (red patch) will inch up to this patch
+	Fixes some cars not going right on red because they never were on a red patch
+ -Cars that reach their max speed set acceleration to 0 so other cars looking at them know they are not really accelerating
+ -"find-nearest-car" and "find-nearest-left-turner" forces distance to be at least 1
+ -*-distance procedures were reporting _time_ not _distance_ so they now use correct physics formulas :)
+ -A few minor changes in "intersection-clear?" avoids more blocked boxes
+ -"right-turn-clear?" simplyfied some conditionals and this avoids tons of blocked boxes
+ -***smarter lane changing avoids _most_ right turners that miss turns because they couldn't change lanes***
+FEATURES-ADDED:
+ -Cars keep track of how long they are between intersections as a measure of traffic flow
+ -"brake" procedure to replace "accelerate" for negative accelerations
+ -"find-nearest-car-behind" is just the original procedure copied to look backward
+	this should be merged, it's copy-paste programming and it's evil
+ -"lane-is-clear?" and "will-cars-collide?" added for smarter lane changing
+ -"evacuation-route" procedure separates logic from "evacuate" for seeking evacuation routes specifically
+FEATURES-DEPRECIATED:
+ -"cars-ahead" not being used, the other *-ahead procedures used by left_turners still... 
+MAJOR-CHANGES:
+ -Added PERCENT_REQUIRED_TO_EVAC constant specifying percent of cars that counts as an evacuation
+	97.5% might be good but I need to test different values to find which one is consistant
+ -Cars that are evacuating and stuck in long lines will change to the evacuation route after some time
+	Added to "update-goal"
+SOURCE-CHANGES:
+ -Moved TICK_LIMIT to a source constant from the model input box
+ -Renamed "close-distance" to "brake-distance" because that is a more descriptive name
+ -Renamed "box-blocked?" to "intersection-clear?" to fit in with other so-called box block avoiding procedures
+MINOR-CHANGES:
+ -Added a flag when the output file is written so that it is done once
+	(in case of debugging where we want multiple runs after end to not stop every tick)
+ -Print time and date at beginning and end of run (to see how long it takes for HPCC runs)
+ -Print ticks at a blocked box for better debug
+ -Store result of "find-nearest-car" in "find-queue" because it could be slow to do twice
+ -New "intersection-clear?" is negation of old "box-blocked?"
+ -Right turners now report if they fail to turn right because they were in the wrong lane
+
+/******************************************************************************/
+
+version 2.0.0
+05/09/2009 01:27AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Better light synchronization can handle lights that were out of sync before change
+ -Added acceleration for better speed control (was possible to stop from any speed instantly)
+ -Output reports failure as much higher numbers
+ -Many more minor changes
+ -3567 Lines
+------------------
+BUGS-FIXED:
+ -Simulation no longer has a tick limit if there is no emergency (which is only used to debug)
+ -"find-nearest-car" fix for two cars on same patch, calculates which one is really ahead of the other
+ -Lane changing allowed cars to change lanes on top of another car, new method should work better
+FEATURES-ADDED:
+ -New traffic light timings for evacuations now can properly adjust to random initial offsets 
+	inorder to synchronize to desired offsets
+ -"accelerate" procedure changes acceleration
+ -"reset-acceleration" procedure sets acceleration to 0
+ -"apply-acceleration" procedure adds acceleration to speed within limits
+ -"find-nearest-car" procedure looks ahead for cars to calculate when a car should slow down
+ -"find-nearest-left-turner" procedure is the same as above for left_turners
+ -"color-of-nearest-light" procedure looks for intersections ahead for speed control
+ -"close-distance" distance to look ahead for speed control (distance to slam on brakes)
+ -"safe-distance" distance to look ahead for speed control (distance to come to smooth stop)
+ -"sync-timing" procedure adds offset to lights that are waiting for other lights to change to evacuation time
+ -So-called out-of-sync bug stops execution and reports output as error 
+	(although it could be removed for performance in production environment)
+MAJOR-CHANGES:
+ -Cars now have acceleration variables and the constant acceleration has become an average and maximum acceleration
+ -***New "set-speed" has been reworked to rely on a changing acceleration***
+ -"find-queue" updated to support cars that are not directly touching but are close enough
+ -"box-blocked?" reworked for new speed control to make decision _before_ cars get to light
+ -Left-turners use crude copy of new speed control, could be improved
+ -Left-turners will not complete the turn on yellow until traffic is clear
+ -"left-traffic-clear" updated for new speed control system, works well, not perfect
+ -File output for failure multiplies time by 1000 so that HEEDS will know it is a bad design
+SOURCE-CHANGES:
+ -"distance-to-look-ahead" renamed to "turn-distance" to fit it's purpose with new -distance procedures
+	all of these could be renamed probably
+MINOR-CHANGES:
+ -"go" procedure now properly sorts left_turners before cars (may or may not have a large impact)
+ -Added debugging output to changing light timings (should remove it)
+ -"make-turn-decision" right turning conditional optimized to short circuit on non-right turners
+
+/******************************************************************************/
+
+version 1.4.2
+04/21/2009 11:43PM
+------------------
+SUMMARY:
+ -Changed speed distribution to normal curve
+ -Minor Changes
+ -3337 Lines
+------------------
+MAJOR-CHANGES:
+ -Changed speed distribution to normal curve (was very unbalanced)
+	-Now speed has mean of 1.1, SD of 0.2 in range [0.5, 2.0]
+SOURCE-CHANGES:
+ -Reordered Many Procedures
+ -Added Section Headings for easier scanning
+ -Added primitive preprocessor syntax to speed up command-line runs
+ -Moved long comments and conditionals to multiple lines to narrow the code a little
+	-should be easier to scan
+MINOR-CHANGES:
+ -Made non-road color variable because it is important to many functions
+ -Added BRAKE_ACCELERATION (not yet used), for new (smarter) speed control (in the future)
+ -Lined up roads evenly (off by 1 patch, very small difference)
+ -Optimized conditional before "sound-alarm" to short-circuit more (insignificant speed up)
+ -Moved the part where right turners who missed the turn change goal to 0 
+	-from "set-car-speed" to "make-turn-decision", more logical
+ -Added "find-nearest-car" for the future speed control to work
+
+/******************************************************************************/
+
+version 1.4.0
+03/31/2009 05:58PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Better at finding evacuation roads
+ -Rearranged some parts of go
+ -Report results appends to file and is adjusted for time before evacuation
+ -Better Behavoir space handling
+ -Minor changes
+ -3183 Lines
+------------------
+BUGS-FIXED:
+ -Removed clear-all from setup so that model runs with Behavior Space do not delete set variables
+ -Fixed "find-first-goal" to work with left_turners in intersections (out of sync bug)
+ -Adjusted "new_dir" in "update-goal" at more appropriate times for left_turners (out of sync bugs)
+ -Removed weird statement in "evacuate" that adjusted x and y for some reason
+ -Cars make random turns in "evacuate" when going north (not just south as it was before)
+ -"local-goal" removes ultimate_goal if it is the curr_goal (fixed > to >= when looking at list length)
+	-Also, now it will call "update-goal" if it empties the ultimate_goal list
+ -Removed conditionals in "leave-goal" for detecting map edges, pointless and awkward
+FEATURES-ADDED:
+ -"any-cars-here-to-dist" procedure used in "right-on-red"
+	looks to see if there are any cars within a range ahead of a patch
+ -"distance-to-look-ahead" reporter for how far ahead of intersections right turners need to slow down
+	in order to make the turn at or around TURN_SPEED
+ -"evacuate" cars favoring evacuation roads will set local-goals to force the correct path finding strategy
+	this is better than just turning and randomly hoping to hit an evacuation road
+FEATURES-DEPRECIATED:
+ -"slow-to-turn" combined with "set-speed" and decoupled from "speed-up"
+MAJOR-CHANGES:
+ -Did some reordering in "go" so that turtle procedures seem to make more sense
+ -Combined the ask in "go" for left_turners and cars so that left_turners do not get two turns ever
+ -Moved "respawn-cars" in "go" above the ask statements so that they get to move after spawning
+ -"respawn-cars" respawns as many cars as possible that are ready, not just 1 x% of the time
+ -"right-turn-clear?" rewritten to count empty spaces available like other box-blocked procedures
+ -"prepare-left-turn" now looks at distance between roads to see if queue is too long
+ -"continue-left-turn" cars will "slow-down" every time they do not move to simulate speeds
+	still very awkward, need to leave intersection quickly, but having high speed unrealistic
+ -"continue-left-turn" cars "set-speed" after turning
+ -"report-results" appends to the file to allow multiple runs to be averaged
+ -"report-results" adjusted for time prior to evacuation
+SOURCE-CHANGES:
+ -Most constants are ALL CAPS (but Netlogo is case-insensitive)
+MINOR-CHANGES:
+ -Added many more constants to replace magic numbers
+ -New car colors reflect goals, not speed
+ -Setup button (in GUI) now sets a seed for easier debugging
+ -Removed some sliders and placed them in "setup-globals"
+ -Set "is_gui?" for setting globals from defaults vs. passing them in .xml for behavior space runs
+
+/******************************************************************************/
+
+version 1.3.0
+03/17/2009 12:46PM
+------------------
+SUMMARY:
+ -Bugfix
+ -Evacuating cars favor evacuation roads
+ -Minor changes
+ -3020 Lines
+------------------
+BUGS-FIXED:
+ -Only decrement countdown of danger cars during an alarm as that is the only time they can respawn
+MAJOR-CHANGES:
+ -Removed "right-on-red" from "set-car-speed" to "make-turn-decision" so the procedures make more sense
+	now post conditions fit better
+ -Changed the limit so that left_turners will not turn if there are 10 cars in line (was 15)
+ -Reworked "evacuate" to tend to favor evacuation roads
+	Almost complete rewrite
+SOURCE-CHANGES:
+ -Added global lists of which roads are which type (using row and column numbers)
+	now initialized in setup-globals
+ -Removed profiler comments
+MINOR-CHANGES:
+ -Truncated too many cars error message
+ -Aligned roads on edges so that the edges are now even and roads are centered
+ -Changed "fd speed" to "jump speed" as it is a slight performance boost
+
+/******************************************************************************/
+
+version 1.2.0
+03/11/2009 01:55AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Added danger_cars for persistent cars that avoid dying
+ -2947 Lines
+------------------
+BUGS-FIXED:
+ -Removed "set-car-speed" from "reset" as it allowed right on reds during initialization
+	(cars should not move during initialization)
+ -Cars turning right on red must update their goals upon entering the intersection
+ -"slow-to-turn" and related logic now uses smarter variable look ahead
+	to avoid speeding and missing a right turn (common bug where cars fail to turn when driving fast)
+ -"turn-right" resets turn_goal to 0 (bug in itself?)
+ -"update-goal" adjusts new_dir for left_turners if they are in an intersection (ignoring initial? flag)
+	(fixes case where left_turners in intersection change goal upon hearing alarm and go out of sync)
+ -Removed random turning as part of local goals (caused horrible path decisions) (available in comments)
+ -Reverted "fix-no-left" to use complex intermediate goals
+	(just set to 0 caused some odd looping and was much less efficient)
+FEATURES-ADDED:
+ -New breed "danger_cars" for cars that drive into dangerous zone
+	(now all cars are persistent and do not die until evacuation)
+MAJOR-CHANGES:
+ -Made more procedures breed-aware to ignore danger_cars
+ -Cars entering danger zone now call "hide-me" rather than die
+ -Respawning uses "show-me" for new "danger_cars" breed
+ -"put-on-entrance" sets heading of cars correctly
+SOURCE-CHANGES:
+ -Added "TURN_SPEED" constant for the speed that right turners should slow down to (80%)
+ -Renamed "setup-cars" to "setup-car" to reflect meaning better
+MINOR-CHANGES:
+ -Removed duplicate "find-queue"
+ -"intersection-ahead" sped up by starting index at 1 not 0
+ -2500 tick time limit (was 3000)
+
+/******************************************************************************/
+
+version 1.1.0
+03/09/2009 12:35AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Added random turning (later removed as buggy)
+ -Cleaned up output
+ -Minor changes
+ -2869 Lines
+------------------
+BUGS-FIXED:
+ -Cars that are waiting for a long time to go straight will only try to go right if clear
+ -Reset "can_change?" flag in "fix-one-way"
+FEATURES-ADDED:
+ -"right-on-red" as separate procedure
+ -"intersection-ahead? [d]" procedure to see if the intersection is within "d" patches
+MAJOR-CHANGES:
+ -Made cars heading parallel to goal less likely to random turn (50%->10%)
+ -Changed output format of "report-results" to always show time and number of cars not evac
+SOURCE-CHANGES:
+ -Uses local list variables to set up road map (easier to maintain and change layout)
+ -Removed some old comments
+ -Identified magic numbers for removal
+MINOR-CHANGES:
+ -Made loop more readable in "find-lights" procedure
+ -Removed unused "find-nearest-car" procedure
+ -Evacuate after 320 ticks (was 838)
+ -3000 tick time limit (was 5000)
+
+/******************************************************************************/
+
+version 1.0.1
+02/16/2009 09:31AM
+------------------
+SUMMARY:
+ -Bugfixes
+ -2854 Lines
+------------------
+BUGS-FIXED:
+ -No negative speeds when slowing down
+ -Fixed bug where some cars go out of sync with goals,
+	occasionally getting into infinite turn loops
+
+/******************************************************************************/
+
+version 1.0.0
+02/15/2009 09:00PM
+------------------
+SUMMARY:
+ -Bugfixes
+ -Change traffic lights on emergency, write output, and exit
+ -East/West Traffic lights before north/south
+ -Better Documentation
+ -2815 Lines
+------------------
+BUGS-FIXED:
+ -Sound alarm one step sooner (off by one error)
+ -No plotting when there are no turtles
+ -Plot turtles, not cars to include all breeds
+ -Turtles that "hear" alarm will set "leave?" to false
+ -Scaled some speed constants by the "speed_limit"
+MAJOR-CHANGES:
+ -Made east/west roads green before north/south roads in cycle (favor evac)
+ -Made local goals take priority over leave goals so that cars can have intermediate goals
+IMPROVEMENTS:
+ -Improved "box-blocked?" procedure to work better/smarter and avoid gridlocks
+ -Improved "can-complete-left-turn?" procedure also
+FEATURES-ADDED:
+ -Added "new_*" variables to patches for evacuation signal change
+ -Added procedure to change traffic light timings when evacuation begins
+    -Includes reading new values and making the transition
+ -Added procedure to write output file at end of simulation or on error
+ -Added exit condition
+FEATURES-DEPRECIATED:
+ -"setup-test" removed as obsolete
+SOURCE-CHANGES:
+ -Doxygen style documentation added to procedures
+ -Removed old/unused variables and renamed others (removed some my_*)
+ -"setup" uses "reset" to reduce redundancy
+ -changed "left-traffic-clear" to "left-traffic-clear?" to show it is a boolean reporter
+MINOR-CHANGES:
+ -Changed some plots to show total turtles
+
+/******************************************************************************/
+
+version 0.9.0
+02/07/2009 05:14PM
+------------------
+SUMMARY:
+ -Fixes for box blocked
+ -Bugfixes
+ -New artery road
+ -2130 Lines
+------------------
+BUGS-FIXED:
+ -Make sure file exists when reading traffic data
+ -Right on Red: make sure the lane is correct
+ -Right turners that don't get into right lane at intersection change goal to straight
+ -Reset wait_time on turning cars to get more accurate numbers
+ -"leave-goal" resets turn_goal to 0 if the car should go straight
+ -"fix-one-way" used "heading" instead of "new_dir" could go out-of-sync
+MAJOR-CHANGES:
+ -Added 2nd artery (north/south) road to end most grid locks
+FEATURES-ADDED:
+ -Added "can_change?" flag to allow smarter turns at one-way roads (not just straight)
+ -Allow cars waiting a long time for a blocked_box to change goal to turn right (???)
+ -Added left_turn procedure to check for blocked box - "can-complete-left-turn?"
+IMPROVEMENTS:
+ -Fixed some checks for "box_blocked?" in set_speed
+ -Fixed "box_blocked?" to look ahead more
+ -Made "right_turn_clear?" report false more to avoid gridlocks
+ -Cars that are heading parallel to goal will randomly turn toward it to get closer
+ -"leave-goal" only turn half the time to avoid turn back ups along edges
+MINOR-CHANGES:
+ -Added some new plots
+
+/******************************************************************************/
+/******************************************************************************/
+
+TEMPLATE
+version x.x.x
+mm/dd/yyyy hh:mmXM
+------------------
+SUMMARY:
+ -
+------------------
+BUGS-FIXED:
+ -
+FEATURES-ADDED:
+ -
+FEATURES-DEPRECIATED:
+ -
+MAJOR-CHANGES:
+ -
+SOURCE-CHANGES:
+ -
+MINOR-CHANGES:
+ -
+ 
+/******************************************************************************/
